@@ -9,7 +9,7 @@
         <router-link to="/image-upload">
           <button>
             <i class="upload-button__icon icon-upload3" />
-            上传图片
+            <span class="upload-button__text">上传图片</span>
           </button>
         </router-link>
       </div>
@@ -44,7 +44,7 @@ export default {
 }
 
 .header-container__logo {
-  height: 60px;
+  height: 100%;
   margin-right: 10px;
 }
 
@@ -59,7 +59,7 @@ export default {
 
 .header-container__menu {
   margin-left: 35px;
-  height: 60px;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,5 +88,27 @@ export default {
 .upload-button__icon {
   margin-right: 6px;
   font-size: 18px;
+}
+
+@media screen and (max-width: 767px) {
+  // 后台管理暂时不需要移动端适配
+  // 先暂时隐藏掉
+  .nav-button {
+    display: none;
+  }
+
+  .header-container {
+    line-height: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .header-container__menu {
+    margin-left: 15px;
+  }
+
+  .header-container__menu-button button {
+    font-size: 14px;
+  }
 }
 </style>

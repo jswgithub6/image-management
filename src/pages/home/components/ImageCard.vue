@@ -38,4 +38,11 @@ export default {
   width: 100%;
   height: 100%;
 }
+
+@media screen and (max-width: 767px) {
+  .image-card {
+    margin: 8px 0;
+    width: 100%;
+  }
+}
 </style>
