@@ -7,7 +7,7 @@
       </div>
       <div class="image-upload__content">
         <div class="image-upload__label">上传图片:</div>
-        <upload />
+        <upload ref="upload" />
       </div>
       <div class="image-upload__footer">
         <div @click="handleSave" class="image-upload__submit">
@@ -24,11 +24,18 @@ export default {
   components: { Upload },
   methods: {
     handleSave() {
-      /**
-       * todo
-       * 提示⽤用户是否继续上传，还是返回列列表⻚页
-       */
-      this.$router.replace("/");
+      this.$msg({
+        message: "图片保存成功，是否继续上传？",
+        confirmButtonText: "继续上传",
+        cancelButtonText: "返回列表页",
+        callback: (action) => {
+          if (!action) {
+            this.$router.replace("/");
+          } else {
+            this.$refs.upload.reset();
+          }
+        },
+      });
     },
   },
 };

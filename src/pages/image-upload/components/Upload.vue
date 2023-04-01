@@ -117,6 +117,10 @@ export default {
       const fileList = this.uploadFiles;
       return fileList.find((item) => item.uid === rawFile.uid);
     },
+    reset() {
+      this.filesList = [];
+      this.uploadFiles = [];
+    },
   },
 };
 </script>
