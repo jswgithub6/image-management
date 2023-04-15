@@ -1,17 +1,19 @@
 <template>
-  <div class="image-upload">
-    <div class="image-upload__container">
-      <div class="image-upload__header">
-        <h1>发布图片</h1>
-        <router-link to="/"><span>返回首页</span></router-link>
-      </div>
-      <div class="image-upload__content">
-        <div class="image-upload__label">上传图片:</div>
-        <upload ref="upload" />
-      </div>
-      <div class="image-upload__footer">
-        <div @click="handleSave" class="image-upload__submit">
-          <button>保存</button>
+  <div class="upload-page">
+    <div class="upload-page__container">
+      <div class="image-upload">
+        <div class="image-upload__header">
+          <h1>发布图片</h1>
+          <router-link to="/"><span>返回首页</span></router-link>
+        </div>
+        <div class="image-upload__content">
+          <div class="image-upload__label">上传图片:</div>
+          <upload ref="upload" />
+        </div>
+        <div class="image-upload__footer">
+          <div @click="handleSave" class="image-upload__submit">
+            <button>保 存</button>
+          </div>
         </div>
       </div>
     </div>
@@ -42,15 +44,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.image-upload {
-  width: 100%;
+.upload-page {
+  width: 100vw;
   padding: 40px;
   box-sizing: border-box;
+
+  // & .upload-page__container 可以简写成 &__container
+  & .upload-page__container {
+    box-sizing: border-box;
+    padding: 0 70px;
+  }
 }
 
-.image-upload__container {
-  margin: 0 auto;
-  width: 1100px;
+.image-upload {
+  width: 100%;
   background-color: #fff;
   border-radius: 4px;
   height: 100%;
@@ -101,6 +108,7 @@ export default {
   border: none;
   border-radius: 0;
   cursor: pointer;
+  font-size: 16px;
 }
 
 .image-upload__submit {
@@ -108,6 +116,31 @@ export default {
 }
 
 .image-upload__footer {
-  margin-bottom: 40px;
+  margin-bottom: 35px;
+}
+
+@media screen and (max-width: 767px) {
+  .upload-page {
+    padding: 0;
+    & .upload-page__container {
+      padding: 0;
+    }
+  }
+
+  .image-upload__content {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 25px;
+  }
+
+  .image-upload__label {
+    align-self: start;
+    margin-bottom: 10px;
+  }
+
+  .image-upload__submit {
+    width: calc(100% - 40px);
+    margin: 0 auto;
+  }
 }
 </style>

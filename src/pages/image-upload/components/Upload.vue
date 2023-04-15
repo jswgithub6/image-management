@@ -189,13 +189,13 @@ i {
   height: 100%;
   left: 0;
   top: 0;
-  cursor: default;
   opacity: 0;
   background-color: rgba(0, 0, 0, 0.5);
   transition: opacity 0.3s;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: default;
 }
 
 .upload-list__item-actions:hover {
@@ -205,5 +205,13 @@ i {
 .delete-icon {
   color: #fff;
   cursor: pointer;
+}
+
+@media screen and (max-width: 767px) {
+  .upload-list__item,
+  .upload-card {
+    display: block;
+    margin-right: 0;
+  }
 }
 </style>
