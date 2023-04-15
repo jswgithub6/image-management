@@ -18,6 +18,12 @@
 <script>
 export default {
   name: "PullToRefresh",
+  props: {
+    onRefresh: {
+      type: Function,
+      default: () => {},
+    },
+  },
   data() {
     return {
       refreshText: "下拉刷新",
@@ -35,15 +41,26 @@ export default {
   },
   methods: {
     onTouchStart(e) {
-      this.startY = e.touches[0].pageY; // 记录初始touch时的Y坐标
+      // 记录初始touch时的Y坐标
+      this.startY = e.touches[0].pageY;
     },
     onTouchMove(e) {
+      /**
+       * TODO
+       * 这里写的有问题 应该是判断target Element的scrollParent的scrollTop
+       */
       const scrollTop = document.documentElement.scrollTop;
       if (scrollTop > 0) return;
 
       this.currentY = e.touches[0].pageY;
       const deltaY = this.currentY - this.startY;
-      this.offset = deltaY * 0.6; // 增加下拉阻力
+
+      /**
+       * TODO
+       * 下拉时应该有橡皮筋效果
+       * https://github.com/ant-design/ant-design-mobile/blob/master/src/components/pull-to-refresh/pull-to-refresh.tsx#L150
+       */
+      this.offset = deltaY * 0.6; // 先简单模拟一下
 
       if (deltaY > 50) {
         this.refreshText = "释放刷新";
@@ -51,11 +68,14 @@ export default {
         this.refreshText = "下拉刷新";
       }
     },
-    onTouchEnd() {
+    async onTouchEnd() {
       if (this.currentY - this.startY > 50) {
         this.offset = 50;
         this.refreshText = "加载中...";
-        this.$emit("refresh", this.reset);
+        await this.onRefresh();
+        setTimeout(() => {
+          this.reset();
+        }, 800);
       } else {
         this.reset();
       }
