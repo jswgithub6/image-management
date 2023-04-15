@@ -12,6 +12,7 @@
         @delete="deleteFile(item.id)"
         @pass="updateStatus(item.id, 'pass')"
         @reject="updateStatus(item.id, 'reject')"
+        @setTop="setTopImage(item.id)"
       />
       <el-empty
         v-if="!imageList.length"
@@ -64,7 +65,12 @@ import _ from "lodash";
 import ImageCard from "./ImageCard.vue";
 import Status from "./Status.vue";
 import ImageModal from "@/components/ImageModal";
-import { fetchFileList, deleteFileById, updateReviewStatus } from "@/api/file";
+import {
+  fetchFileList,
+  deleteFileById,
+  updateReviewStatus,
+  pinImageToTop,
+} from "@/api/file";
 export default {
   name: "ImageList",
   components: {
@@ -117,6 +123,19 @@ export default {
         await updateReviewStatus(fileId, reviewStatus);
         this.$message.success({ message: "操作成功", duration: 1500 });
         this.updateData(fileId, reviewStatus);
+      } catch (error) {
+        this.$message.error("操作失败，请重试");
+        console.log(error);
+      }
+    },
+    async setTopImage(fileId) {
+      try {
+        await pinImageToTop(fileId);
+        this.$message.success({ message: "置顶成功", duration: 1500 });
+        /**
+         * TODO
+         * 更新数据
+         */
       } catch (error) {
         this.$message.error("操作失败，请重试");
         console.log(error);

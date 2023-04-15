@@ -44,3 +44,10 @@ export function updateReviewStatus(fileId, status) {
     url: `/file/${fileId}/reviewStatus/${status}`,
   });
 }
+
+export function pinImageToTop(fileId) {
+  return request({
+    method: "patch",
+    url: `/file/${fileId}/isTop`,
+  });
+}
