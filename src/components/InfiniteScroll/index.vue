@@ -16,7 +16,7 @@ export default {
     },
     threshold: {
       type: Number,
-      default: 80,
+      default: 30,
     },
     hasMore: {
       type: Boolean,
@@ -32,6 +32,11 @@ export default {
   mounted() {
     this.handleScrollThrottle = _.throttle(this.handleScroll, 200);
     window.addEventListener("scroll", this.handleScrollThrottle);
+    /**
+     * TODO
+     * 实现类似ElementUI中的infinite-scroll-immediate功能
+     * 以防初始状态下内容无法撑满容器
+     */
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScrollThrottle);
@@ -39,9 +44,23 @@ export default {
   methods: {
     handleScroll() {
       if (!this.hasMore) return;
-      const scrollBottom = window.innerHeight + window.scrollY;
-      const elBottom = this.$el.offsetTop + this.$el.offsetHeight;
-      const distanceToBottom = elBottom - scrollBottom;
+      /**
+       *  这里只简单实现了功能
+       *  用InfiniteScroll组件自身到视口顶部的距离 减去 浏览器窗口的视口高度
+       *  得到组件距离视口底部的距离
+       *  ┌───────────┐
+       *  │  scoll    │
+       *  ├───────────┤
+       *  │           │
+       *  │  viewport │
+       *  │           │
+       *  ├───────────┤
+       *  |           |
+       *  │  IS Comp  │
+       *  ├───────────┤
+       */
+      const distanceToBottom =
+        this.$el.getBoundingClientRect().top - window.innerHeight;
       if (distanceToBottom < this.threshold && !this.loading) {
         this.loading = true;
         this.loadMore(() => {

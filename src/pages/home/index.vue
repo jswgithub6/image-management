@@ -12,18 +12,11 @@
             :image-detail="item"
             @click="handleClick"
           />
-          <button
-            v-if="hasMore"
-            class="main-content__button"
-            @click="loadMoreData"
-          >
-            加载更多
-          </button>
+          <InfiniteScroll :loadMore="loadMoreData" :hasMore="hasMore" />
           <el-empty
             v-if="!loading && !imageList.length"
             description="这里空空如也 /(ㄒoㄒ)/~~"
           />
-          <InfiniteScroll :loadMore="loadMoreData" :hasMore="hasMore" />
         </PullToRefresh>
         <Loading v-if="loading" text="数据加载中..." />
       </div>
@@ -141,24 +134,14 @@ main {
   background-color: #eeeeee;
   box-sizing: border-box;
   .main-content {
+    // 为了方便测试，一次只加载了5张图，此时首页展示的图片不足以出现滚动条，InfiniteScroll无法工作
+    // 强行将页面撑满 出现滚动条
+    min-height: 100vh;
+
     padding-top: 10px;
     margin: 0 auto;
     width: 1000px;
     position: relative;
-  }
-  .main-content__button {
-    display: block;
-    width: 100px;
-    height: 40px;
-    padding: 0;
-    color: #fff;
-    background-color: #00c3ff;
-    outline: none;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 0 auto;
   }
 }
 
