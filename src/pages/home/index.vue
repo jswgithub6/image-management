@@ -12,6 +12,13 @@
             :image-detail="item"
             @click="handleClick"
           />
+          <button
+            v-if="hasMore"
+            class="main-content__button"
+            @click="loadMoreData"
+          >
+            加载更多
+          </button>
           <el-empty
             v-if="!loading && !imageList.length"
             description="这里空空如也 /(ㄒoㄒ)/~~"
@@ -104,13 +111,14 @@ export default {
       }
     },
     async loadMoreData(done) {
+      if (!this.hasMore) return;
       try {
         this.pageInfo.pageNumber++;
         const { files, count: total } = await this.getData();
         this.total = total;
         // 新加载的图片添加到imageList
         this.imageList.push(...files);
-        done();
+        _.isFunction(done) && done();
       } catch (error) {
         // 简单处理加载失败的情况
         this.pageInfo.pageNumber--;
@@ -138,6 +146,20 @@ main {
     width: 1000px;
     position: relative;
   }
+  .main-content__button {
+    display: block;
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    color: #fff;
+    background-color: #00c3ff;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 auto;
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -148,6 +170,9 @@ main {
       margin: 0 auto;
       width: 100%;
       padding: 0 30px;
+    }
+    & .main-content__button {
+      display: none;
     }
   }
 }
