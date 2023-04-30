@@ -20,6 +20,7 @@
           @pass="updateStatus(item.id, 'pass')"
           @reject="updateStatus(item.id, 'reject')"
           @setTop="setTopImage(item.id)"
+          @cancelTop="cancelTopImage(item.id)"
         />
       </draggable>
       <el-empty
@@ -79,6 +80,7 @@ import {
   deleteFileById,
   updateReviewStatus,
   pinImageToTop,
+  unpinImage,
   sortImage,
 } from "@/api/file";
 export default {
@@ -179,6 +181,16 @@ export default {
       try {
         await pinImageToTop(fileId);
         this.$message.success({ message: "置顶成功", duration: 1500 });
+        this.fetchData();
+      } catch (error) {
+        this.$message.error("操作失败，请重试");
+        console.log(error);
+      }
+    },
+    async cancelTopImage(fileId) {
+      try {
+        await unpinImage(fileId);
+        this.$message.success({ message: "取消置顶", duration: 1500 });
         this.fetchData();
       } catch (error) {
         this.$message.error("操作失败，请重试");

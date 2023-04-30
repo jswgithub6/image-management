@@ -20,6 +20,21 @@
           删除
         </el-button>
         <el-button type="text" @click="$emit('setTop')"> 置顶 </el-button>
+        <el-dropdown>
+          <i class="el-icon-more el-icon--right" />
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <el-button
+                type="text"
+                style="color: #f9999a"
+                @click="$emit('cancelTop')"
+                :disabled="!imageDetail.isTop"
+              >
+                取消置顶
+              </el-button>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
       <status class="image-card__status" :status="reviewStatus" />
     </div>
@@ -56,18 +71,22 @@ export default {
   .top-tag {
     position: absolute;
     top: -8px;
-    right: -8px;
+    right: -5px;
   }
 }
 
 .image-card ::v-deep .el-card__body {
-  padding: 15px 15px 6px;
+  padding: 15px 10px 6px;
 }
 
 .image-card__img {
   width: 240px;
   height: 165px;
+  margin: 0 auto;
   margin-bottom: 5px;
+}
+.el-dropdown {
+  margin-left: 10px;
 }
 
 .image-card__footer {

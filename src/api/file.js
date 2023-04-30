@@ -48,7 +48,14 @@ export function updateReviewStatus(fileId, status) {
 export function pinImageToTop(fileId) {
   return request({
     method: "patch",
-    url: `/file/${fileId}/isTop`,
+    url: `/file/${fileId}/setTop`,
+  });
+}
+
+export function unpinImage(fileId) {
+  return request({
+    method: "patch",
+    url: `/file/${fileId}/cancelTop`,
   });
 }
 
