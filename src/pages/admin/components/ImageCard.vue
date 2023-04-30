@@ -1,12 +1,13 @@
 <template>
   <el-card class="image-card">
-    <el-badge class="image-card__top" :hidden="!imageDetail.isTop" value="置顶">
+    <div class="image-card__body">
       <div
         @click="$emit('click', imageDetail)"
         class="image-card__img"
         :style="imgStyle"
       />
-    </el-badge>
+      <top-tag :isTop="imageDetail.isTop" text="置顶" />
+    </div>
     <div class="image-card__footer">
       <div>
         <el-button type="text" style="color: #67c23a" @click="$emit('pass')">
@@ -27,6 +28,7 @@
 
 <script>
 import Status from "./Status.vue";
+import TopTag from "./TopTag.vue";
 
 export default {
   name: "ImageCard",
@@ -40,6 +42,7 @@ export default {
   },
   components: {
     Status,
+    TopTag,
   },
 };
 </script>
@@ -48,10 +51,15 @@ export default {
 .image-card {
   width: 270px;
 }
-
-.image-card__top ::v-deep .el-badge__content {
-  right: 30px;
+.image-card__body {
+  position: relative;
+  .top-tag {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+  }
 }
+
 .image-card ::v-deep .el-card__body {
   padding: 15px 15px 6px;
 }
