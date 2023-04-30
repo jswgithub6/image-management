@@ -1,19 +1,27 @@
 <template>
   <div class="image-list">
     <div class="image-list__content">
-      <image-card
-        v-for="item in imageList"
-        :key="item.id"
-        :image-detail="item"
-        :img-src="item.url"
-        :thumbnail-src="item.thumbnailUrl"
-        :review-status="item.reviewStatus"
-        @click="handleClick"
-        @delete="deleteFile(item.id)"
-        @pass="updateStatus(item.id, 'pass')"
-        @reject="updateStatus(item.id, 'reject')"
-        @setTop="setTopImage(item.id)"
-      />
+      <draggable
+        v-model="imageList"
+        class="draggable"
+        :move="onMove"
+        :disabled="isSorting"
+        @change="handleSort"
+      >
+        <image-card
+          v-for="item in imageList"
+          :key="item.id"
+          :image-detail="item"
+          :img-src="item.url"
+          :thumbnail-src="item.thumbnailUrl"
+          :review-status="item.reviewStatus"
+          @click="handleClick"
+          @delete="deleteFile(item.id)"
+          @pass="updateStatus(item.id, 'pass')"
+          @reject="updateStatus(item.id, 'reject')"
+          @setTop="setTopImage(item.id)"
+        />
+      </draggable>
       <el-empty
         v-if="!imageList.length"
         description="这里空空如也 /(ㄒoㄒ)/~~"
@@ -65,11 +73,13 @@ import _ from "lodash";
 import ImageCard from "./ImageCard.vue";
 import Status from "./Status.vue";
 import ImageModal from "@/components/ImageModal";
+import draggable from "vuedraggable";
 import {
   fetchFileList,
   deleteFileById,
   updateReviewStatus,
   pinImageToTop,
+  sortImage,
 } from "@/api/file";
 export default {
   name: "ImageList",
@@ -77,6 +87,7 @@ export default {
     ImageModal,
     ImageCard,
     Status,
+    draggable,
   },
   created() {
     this.fetchData();
@@ -91,9 +102,45 @@ export default {
       },
       showModal: false, // 是否展示大图
       currentIndex: 0, // 当前点击的图片的Index
+      isSorting: false,
     };
   },
   methods: {
+    onMove({ draggedContext, relatedContext }) {
+      const draggedElementIsTop = !!draggedContext.element.isTop;
+      const relatedElementIsTop = !!relatedContext.element.isTop;
+      /**
+       * 如果被拖拽的元素是置顶元素，则停靠的元素不能是非置顶元素
+       * 如果被拖拽的元素是非置顶元素，则停靠的元素不能是置顶元素
+       */
+      const canDrop = draggedElementIsTop
+        ? relatedElementIsTop
+        : !relatedElementIsTop;
+      return canDrop;
+    },
+    async handleSort({ moved }) {
+      try {
+        const { element, newIndex, oldIndex } = moved;
+        const { id, order } = element;
+        this.isSorting = true;
+        if (oldIndex < newIndex) {
+          // 位置向后移动
+          // 因为图片是按照order降序，所以这里相当于order向前移动
+          const { order: insertBefore } = this.imageList[newIndex - 1];
+          await sortImage({ id, order, insertBefore });
+        } else {
+          // 位置向前移动
+          // 同理 order向后移动
+          const { order: insertAfter } = this.imageList[newIndex + 1];
+          await sortImage({ id, order, insertAfter });
+        }
+        await this.fetchData();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.isSorting = false;
+      }
+    },
     async fetchData() {
       try {
         const { data } = await fetchFileList(this.queryInfo);
@@ -132,10 +179,7 @@ export default {
       try {
         await pinImageToTop(fileId);
         this.$message.success({ message: "置顶成功", duration: 1500 });
-        /**
-         * TODO
-         * 更新数据
-         */
+        this.fetchData();
       } catch (error) {
         this.$message.error("操作失败，请重试");
         console.log(error);
@@ -163,7 +207,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.image-list__content {
+.draggable {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;

@@ -51,3 +51,11 @@ export function pinImageToTop(fileId) {
     url: `/file/${fileId}/isTop`,
   });
 }
+
+export function sortImage(data) {
+  return request({
+    method: "post",
+    url: "/file/sort",
+    data,
+  });
+}
