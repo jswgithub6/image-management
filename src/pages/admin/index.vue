@@ -1,7 +1,9 @@
 <template>
   <el-container>
     <el-header class="admin-header">
-      <div class="admin-header__logo"><img src="../../assets/logo.webp" /></div>
+      <div class="admin-header__logo">
+        <img src="../../assets/logo.webp" alt="logo" />
+      </div>
       <div class="admin-header__title"><span>图片管理系统后台</span></div>
       <router-link to="/"><span style="color: #fff">首页</span></router-link>
     </el-header>

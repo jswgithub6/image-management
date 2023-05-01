@@ -1,7 +1,7 @@
 <template>
   <header class="header-container">
     <div class="header-container__logo">
-      <img src="../../../assets/logo.webp" />
+      <img src="../../../assets/logo.webp" alt="logo" />
     </div>
     <div class="header-container__title"><span>图片展示</span></div>
     <div class="header-container__menu">
