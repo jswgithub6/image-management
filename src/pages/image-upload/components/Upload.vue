@@ -6,7 +6,12 @@
           class="upload-list__item-thumbnail"
           :style="{ background: `url(${item.url}) no-repeat center/cover` }"
         />
-        <Loading v-if="item.status === 'uploading'" />
+        <Loading
+          class="upload-list__loading"
+          v-if="item.status === 'uploading'"
+        >
+          <span class="loading__tip">上传中</span>
+        </Loading>
         <div class="upload-list__item-actions">
           <i class="delete-icon icon-bin" @click="handleDelete(item)" />
         </div>
@@ -14,7 +19,7 @@
     </ul>
     <div class="upload-card" @click="handleClick">
       <div class="upload-card__content">
-        <i class="icon-plus" />
+        <i class="add-icon icon-plus" />
         <span>点击添加图片</span>
         <span class="upload-card__tip">支持格式jpg、png、jpeg、gif</span>
         <input
@@ -145,38 +150,62 @@ export default {
   margin: 0 10px 10px 0;
 }
 
+.upload-list__item {
+  position: relative;
+}
+
+$loading-background-color: rgba(0, 0, 0, 0.4);
+$loading-text-color: #ffffff;
+.upload-list__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $loading-background-color;
+  ::v-deep .loading__spinner {
+    color: $loading-text-color;
+  }
+  .loading__tip {
+    color: $loading-text-color;
+  }
+}
+
 .upload-card {
   display: inline-block;
   cursor: pointer;
   background-color: #fbfdff;
   text-align: center;
+
+  &__content {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  &__tip {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 18px;
+  }
+
+  & input {
+    display: none;
+  }
+
+  & .add-icon {
+    font-size: 32px;
+    color: skyblue;
+  }
 }
 
-.upload-card__content {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-}
-
-.upload-card__tip {
-  font-size: 14px;
-  color: #ccc;
-  line-height: 18px;
-}
-
-i {
+.delete-icon {
   font-size: 32px;
-  color: skyblue;
-}
-
-.upload-card input {
-  display: none;
-}
-
-.upload-list__item {
-  position: relative;
+  color: #fff;
+  cursor: pointer;
 }
 
 .upload-list__item-thumbnail {
@@ -200,11 +229,6 @@ i {
 
 .upload-list__item-actions:hover {
   opacity: 1;
-}
-
-.delete-icon {
-  color: #fff;
-  cursor: pointer;
 }
 
 @media screen and (max-width: 767px) {
