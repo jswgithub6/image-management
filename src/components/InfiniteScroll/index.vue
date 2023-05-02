@@ -127,7 +127,9 @@ $font-size: 14px;
 $height: 36px;
 
 .infinite-scroll {
-  height: $height;
+  &__placeholder {
+    height: 36px;
+  }
   &__loading,
   &__finished {
     color: $text-color;
