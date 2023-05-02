@@ -4,21 +4,18 @@
     <main>
       <div class="main-content">
         <PullToRefresh :onRefresh="refresh">
-          <image-card
-            v-for="item in imageList"
-            :img-src="item.url"
-            :thumbnail-src="item.thumbnailUrl"
-            :key="item.id"
-            :image-detail="item"
-            @click="handleClick"
-          />
-          <InfiniteScroll :loadMore="loadMoreData" :hasMore="hasMore" />
-          <el-empty
-            v-if="!loading && !imageList.length"
-            description="这里空空如也 /(ㄒoㄒ)/~~"
-          />
+          <InfiniteScroll :onLoadMore="loadMoreData" :hasMore="hasMore">
+            <image-card
+              v-for="item in imageList"
+              :img-src="item.url"
+              :thumbnail-src="item.thumbnailUrl"
+              :key="item.id"
+              :image-detail="item"
+              @click="handleClick"
+            />
+            <el-empty v-if="showEmpty" description="这里空空如也 /(ㄒoㄒ)/~~" />
+          </InfiniteScroll>
         </PullToRefresh>
-        <Loading v-if="loading" text="数据加载中..." />
       </div>
       <image-modal
         :showModal.sync="showModal"
@@ -30,44 +27,39 @@
 </template>
 
 <script>
-import _ from "lodash";
 import PageHeader from "./components/PageHeader.vue";
 import ImageCard from "./components/ImageCard.vue";
 import PullToRefresh from "@/components/PullToRefresh";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import ImageModal from "@/components/ImageModal";
-import Loading from "@/components/Loading";
 import { fetchAllPassFiles } from "@/api/file";
+import { findIndex } from "lodash";
 export default {
   name: "Home",
   components: {
     PageHeader,
     ImageCard,
     ImageModal,
-    Loading,
     PullToRefresh,
     InfiniteScroll,
   },
-  created() {
-    this.fetchData();
+  computed: {
+    showEmpty() {
+      return this.pageInfo.pageNumber > 0 && this.total === 0;
+    },
   },
   data() {
     return {
       imageList: [],
       currentIndex: 0,
       showModal: false,
-      loading: true,
       total: 0,
       pageInfo: {
-        pageNumber: 1,
+        pageNumber: 0,
         pageSize: 5,
       },
+      hasMore: true,
     };
-  },
-  computed: {
-    hasMore() {
-      return this.imageList.length < this.total;
-    },
   },
   methods: {
     getData() {
@@ -79,19 +71,7 @@ export default {
           .catch(reject);
       });
     },
-    async fetchData() {
-      try {
-        this.loading = true;
-        const { files, count: total } = await this.getData();
-        this.total = total;
-        this.imageList = files;
-      } catch (error) {
-        console.log(error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async refresh() {
+    async refresh(done) {
       // 下拉刷新 获取最新的图片数据
       try {
         // reset pageNumber
@@ -99,6 +79,8 @@ export default {
         const { files, count: total } = await this.getData();
         this.total = total;
         this.imageList = files;
+        this.hasMore = this.imageList.length < this.total;
+        done();
       } catch (error) {
         console.log(error);
       }
@@ -111,16 +93,17 @@ export default {
         this.total = total;
         // 新加载的图片添加到imageList
         this.imageList.push(...files);
-        _.isFunction(done) && done();
+        this.hasMore = this.imageList.length < this.total;
+        done();
       } catch (error) {
-        // 简单处理加载失败的情况
+        // 加载失败
         this.pageInfo.pageNumber--;
         console.log(error);
       }
     },
     handleClick(image) {
       this.showModal = true;
-      const index = _.findIndex(this.imageList, image);
+      const index = findIndex(this.imageList, image);
       this.currentIndex = index;
     },
   },
@@ -134,10 +117,6 @@ main {
   background-color: #eeeeee;
   box-sizing: border-box;
   .main-content {
-    // 为了方便测试，一次只加载了5张图，此时首页展示的图片不足以出现滚动条，InfiniteScroll无法工作
-    // 强行将页面撑满 出现滚动条
-    min-height: 100vh;
-
     padding-top: 10px;
     margin: 0 auto;
     width: 1000px;
