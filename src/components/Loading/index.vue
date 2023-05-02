@@ -1,45 +1,57 @@
 <template>
-  <div class="loading-mask">
-    <div class="loading">
-      <i class="loading-icon icon-spinner2" />
-      <div v-if="!!text" class="loading-text">
-        <span>{{ text }}</span>
-      </div>
-    </div>
+  <div class="loading">
+    <span class="loading__spinner">
+      <i class="loading__icon icon-spinner2" />
+    </span>
+    <span class="loading__text">
+      <slot></slot>
+    </span>
   </div>
 </template>
 
 <script>
 export default {
   name: "Loading",
-  props: ["text"],
 };
 </script>
 
 <style lang="scss" scoped>
-.loading-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  text-align: center;
-  cursor: default;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.4);
-}
+$loading-spinner-color: #323233;
+$loading-spinner-size: 20px;
+$text-color: #646566;
+$text-font-size: 14px;
 
 .loading {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  display: block;
+  position: relative;
+  color: $loading-spinner-color;
+  font-size: 0;
   width: 100%;
-}
+  height: 100%;
 
-.loading-icon {
-  display: inline-block;
-  font-size: 20px;
-  animation: rotating 2s linear infinite;
+  &__spinner {
+    position: relative;
+    display: inline-block;
+    height: $loading-spinner-size;
+    width: $loading-spinner-size;
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+  }
+
+  &__icon {
+    display: inline-block;
+    font-size: $loading-spinner-size;
+    animation: rotating 1s linear infinite;
+  }
+
+  &__text {
+    display: inline-block;
+    margin-left: 8px;
+    color: $text-color;
+    font-size: $text-font-size;
+    vertical-align: middle;
+  }
 }
 
 @keyframes rotating {
